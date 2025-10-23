@@ -1,0 +1,109 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define endl '\n'
+#define ll long long
+struct point{
+    double x;
+    double y;
+};
+bool on(point p,point p1,point p2){
+    if(p.x>=min(p1.x,p2.x)&&p.x<=max(p1.x,p2.x)&&p.y>=min(p1.y,p2.y)&&p.y<=max(p1.y,p2.y))return true;
+    else return false;
+}
+double dis(point a,point b){
+    return sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+}
+double point_to_line(point p,point a,point b){
+    if(a.x==b.x&&a.y==b.y){
+        return dis(p,a);
+    }
+    double ab_x=b.x-a.x;
+    double ab_y=b.y-a.y；
+    double ap_x=p.x-a.x;
+    double ap_y=p.y-a.y;
+    double t=(ap_x*ab_x+ap_y*ab_y)/(ab_x*ab_x+ab_y*ab_y);
+    t=max(0.0,min(1.0,t));
+    point P={a.x+t*ab_x,a.y+t*ab_y};
+    return dis(P,p);
+}
+double dis_of_lines(point p1,point p2,point p3,point p4){
+    double dis1=point_to_line(p1,p3,p4);
+    double dis2=point_to_line(p2,p3,p4);
+    double dis3=point_to_line(p3,p1,p2);
+    double dis4=point_to_line(p4,p1,p2);
+    return min(min(dis1,dis2),min(dis3,dis4));
+}
+void point_of_cross(point p1,point p2,point p3,point p4){
+    double x=((p1.x*p2.y-p1.y*p2.x)*(p3.x-p4.x)-(p1.x-p2.x)*(p3.x*p4.y-p3.y*p4.x))/((p1.x-p2.x)*(p3.y-p4.y)-(p1.y-p2.y)*(p3.x-p4.x));
+    double y=((p1.x*p2.y-p1.y*p2.x)*(p3.y-p4.y)-(p1.y-p2.y)*(p3.x*p4.y-p3.y*p4.x))/((p1.x-p2.x)*(p3.y-p4.y)-(p1.y-p2.y)*(p3.x-p4.x));
+    cout<<fixed<<setprecision(10)<<x<<" "<<y<<endl;
+    return;
+}
+bool Iscross(point p1,point p2,point p3,point p4){
+    double d1=(p1.x-p2.x)*(p1.y-p3.y)-(p1.y-p2.y)*(p1.x-p3.x);//p1p2 p3
+    double d2=(p1.x-p2.x)*(p1.y-p4.y)-(p1.y-p2.y)*(p1.x-p4.x);//p1p2 p4
+    double d3=(p3.x-p4.x)*(p3.y-p1.y)-(p3.y-p4.y)*(p3.x-p1.x);//p3p4 p1
+    double d4=(p3.x-p4.x)*(p3.y-p2.y)-(p3.y-p4.y)*(p3.x-p2.x);//p3p4 p2
+    if((p1.x==p3.x&&p1.y==p3.y)||(p2.x==p3.x&&p2.y==p3.y)||(p2.x==p4.x&&p2.y==p4.y)||(p1.x==p4.x&&p1.y==p4.y)){
+        //cout<<1<<endl;
+        return true;
+    }
+    if(d1==d2&&d2==d3&&d3==d4&&d4==0){
+        if(on(p1,p3,p4)||on(p2,p3,p4)||on(p3,p1,p2)||on(p4,p1,p2)){
+            //cout<<1<<endl;
+            return true;
+        }
+        else{
+            //cout<<0<<endl;
+            return false;
+        }
+    }
+    if(d1*d2<0&&d3*d4<0){
+        //cout<<1<<endl;
+        return true;
+    }
+    else if(d1==0){
+        if (on(p3,p1,p2)){
+            //cout<<1<<endl;
+            return true;
+        }
+    }
+    else if(d2==0){
+        if (on(p4,p1,p2)){
+            //cout<<1<<endl;
+            return true;
+        }
+    }
+    else if(d3==0){
+        if (on(p1,p3,p4)){
+            //cout<<1<<endl;
+            return true;
+        }
+    }
+    else if(d4==0){
+        if (on(p2,p3,p4)){
+            //cout<<1<<endl;
+            return true;
+        }
+    }
+    //cout<<0<<endl;
+    return false;
+}
+int main(){
+    point p1,p2,p3,p4;
+    int q;
+    cin>>q;
+    while(q--){
+        cin>>p1.x>>p1.y;
+        cin>>p2.x>>p2.y;
+        cin>>p3.x>>p3.y;
+        cin>>p4.x>>p4.y;
+        if(Iscross(p1,p2,p3,p4)){
+            cout<<fixed<<setprecision(10)<<0.0<<endl;
+        }
+        else{
+            cout<<fixed<<setprecision(10)<<dis_of_lines(p1,p2,p3,p4)<<endl;
+        }
+    }
+    return 0;
+}
